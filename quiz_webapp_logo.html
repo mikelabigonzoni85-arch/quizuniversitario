@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz di Orientamento Universitario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #00a0e3;
+            text-align: center;
+            padding: 20px;
+        }
+        header img {
+            max-width: 200px;
+            height: auto;
+        }
+        main {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        button {
+            background-color: #00a0e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="274987797_137255215462898_1365432495993264987_n.jpg" alt="Logo TesinTesta">
+    </header>
+    <main>
+        <h1>Scopri il tuo percorso universitario ideale</h1>
+        <form id="quizForm">
+            <p>1. Qual è la tua materia preferita a scuola?</p>
+            <label><input type="radio" name="q1" value="scientifico"> Scienze</label><br>
+            <label><input type="radio" name="q1" value="umanistico"> Lettere</label><br>
+            <label><input type="radio" name="q1" value="economico"> Economia</label><br>
+            
+            <p>2. Ti piace lavorare in gruppo o in autonomia?</p>
+            <label><input type="radio" name="q2" value="gruppo"> In gruppo</label><br>
+            <label><input type="radio" name="q2" value="autonomia"> In autonomia</label><br>
+
+            <p>Inserisci la tua email per ricevere il risultato (verrà inviata anche in copia a <strong>info@tesintesta.it</strong>):</p>
+            <input type="email" id="email" name="email" placeholder="tua@email.it" required>
+
+            <button type="submit">Invia</button>
+        </form>
+    </main>
+    <script>
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = (document.getElementById('email').value || '').trim();
+            if (!email) { alert('Inserisci una email valida.'); return; }
+
+            const result = "In base alle tue risposte, il corso ideale per te è: ...";
+            const subject = encodeURIComponent('Risultati quiz orientamento universitario');
+            const body = encodeURIComponent(result + '\n\nPer l’iscrizione puoi rivolgerti a TesinTesta visitando www.tesintesta.it');
+            const cc = encodeURIComponent('info@tesintesta.it');
+
+            const mailto = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}&cc=${cc}`;
+            window.location.href = mailto;
+        });
+    </script>
+</body>
+</html>
