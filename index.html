@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Orientamento Universitario - TesinTesta</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #29A8E0;
+      --primary-dark: #1a7fb3;
+      --secondary: #FF6B6B;
+      --success: #4ECDC4;
+      --warning: #FFE66D;
+      --dark: #2D3436;
+      --light: #F7F7F7;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo svg {
+      width: 150px;
+      height: auto;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 1rem;
+      margin: 1rem auto;
+      max-width: 800px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .progress-header h3 {
+      color: var(--dark);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .progress-percentage {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #E0E0E0;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Badges */
+    .badges-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s ease;
+      opacity: 0.3;
+    }
+
+    .badge.earned {
+      opacity: 1;
+      animation: badgeEarned 0.5s ease;
+    }
+
+    @keyframes badgeEarned {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .badge.interests { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .badge.values { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
+    .badge.learning { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; }
+    .badge.reality { background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 2rem 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Start Screen */
+    .start-screen {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .start-screen h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .start-screen p {
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .feature {
+      padding: 1.5rem;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      border-color: #667eea;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .feature p {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    /* Question Styles */
+    .question-screen {
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .question-header {
+      margin-bottom: 2rem;
+    }
+
+    .question-number {
+      display: inline-block;
+      padding: 5px 15px;
+      background: var(--gradient);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .question-text {
+      font-size: 1.3rem;
+      color: var(--dark);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .question-subtitle {
+      color: #666;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    /* Answer Options */
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .option {
+      padding: 1.2rem;
+      border: 2px solid #E0E0E0;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      background: white;
+    }
+
+    .option:hover {
+      border-color: #667eea;
+      transform: translateX(5px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    .option.selected {
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      border-color: #667eea;
+    }
+
+    .option-label {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 0.3rem;
+    }
+
+    .option-text {
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+    /* Slider Questions */
+    .slider-container {
+      margin: 2rem 0;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .slider-label {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .slider-label.left {
+      text-align: left;
+      background: linear-gradient(90deg, #667eea15, transparent);
+      border-radius: 10px 0 0 10px;
+    }
+
+    .slider-label.right {
+      text-align: right;
+      background: linear-gradient(90deg, transparent, #764ba215);
+      border-radius: 0 10px 10px 0;
+    }
+
+    .slider {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      background: white;
+      border: 3px solid #667eea;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider-value {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    /* Results Screen */
+    .results-screen {
+      animation: slideUp 0.5s ease;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .results-header h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .profile-summary {
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+    }
+
+    .profile-traits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+
+    .trait {
+      padding: 8px 16px;
+      background: white;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #667eea;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-recommendations {
+      margin-top: 2rem;
+    }
+
+    .course-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient);
+    }
+
+    .course-card:hover {
+      border-color: #667eea;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .course-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--dark);
+    }
+
+    .course-faculty {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.3rem;
+    }
+
+    .match-percentage {
+      padding: 5px 15px;
+      background: var(--gradient);
+      color: white;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .course-details {
+      margin-top: 1rem;
+    }
+
+    .detail-section {
+      margin-bottom: 1rem;
+    }
+
+    .detail-title {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 0.3rem;
+      font-size: 0.9rem;
+    }
+
+    .detail-content {
+      color: #666;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .pros, .cons {
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    .pros {
+      background: #4ECDC415;
+      border: 1px solid #4ECDC4;
+    }
+
+    .cons {
+      background: #FFE66D15;
+      border: 1px solid #FFE66D;
+    }
+
+    .pros h4, .cons h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pros h4 { color: #4ECDC4; }
+    .cons h4 { color: #FFA500; }
+
+    .pros ul, .cons ul {
+      list-style: none;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .pros li, .cons li {
+      padding-left: 1.2rem;
+      position: relative;
+      margin-bottom: 0.3rem;
+    }
+
+    .pros li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4ECDC4;
+      font-weight: bold;
+    }
+
+    .cons li::before {
+      content: '!';
+      position: absolute;
+      left: 0;
+      color: #FFA500;
+      font-weight: bold;
+    }
+
+    /* Timer for speed rounds */
+    .timer-container {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .timer {
+      display: inline-block;
+      padding: 10px 20px;
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .timer.warning {
+      color: #FF6B6B;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Email Form */
+    .email-form {
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      padding: 2rem;
+      border-radius: 15px;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .email-form h3 {
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .email-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px 20px;
+      border: 2px solid #E0E0E0;
+      border-radius: 25px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .email-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+
+    .slide-in-left {
+      animation: slideInLeft 0.5s ease;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .start-screen h1 {
+        font-size: 1.8rem;
+      }
+
+      .question-text {
+        font-size: 1.1rem;
+      }
+
+      .pros-cons {
+        grid-template-columns: 1fr;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .slider-labels {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .slider-label {
+        text-align: center !important;
+        border-radius: 10px !important;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Celebration animation */
+    .celebration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #667eea;
+      animation: confetti-fall 3s linear;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="60" viewBox="0 0 150 60">
+          <rect width="150" height="60" fill="#29A8E0" rx="10"/>
+          <g fill="#ffffff" font-family="Arial, sans-serif" font-weight="700" font-size="18">
+            <text x="15" y="28">TESIN-</text>
+            <text x="15" y="48">TESTA</text>
+          </g>
+        </svg>
+      </div>
+      <div class="progress-percentage" id="overallProgress">0%</div>
+    </div>
+  </header>
+
+  <div class="progress-container" id="progressContainer" style="display: none;">
+    <div class="progress-header">
+      <h3 id="sectionName">Preparazione...</h3>
+      <div class="badges-container">
+        <div class="badge interests" id="badgeInterests">🎯 Interessi</div>
+        <div class="badge values" id="badgeValues">💎 Valori</div>
+        <div class="badge learning" id="badgeLearning">📚 Apprendimento</div>
+        <div class="badge reality" id="badgeReality">✅ Reality Check</div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <main>
+    <div class="quiz-container" id="quizContainer">
+      <!-- Content will be inserted here dynamically -->
+    </div>
+  </main>
+
+  <script>
+    // Corso mapping e struttura dati
+    const corsiData = {
+      'ssml-relazioni': {
+        nome: 'Relazioni Internazionali e Diplomatiche',
+        facolta: 'SSML - Scienze della Mediazione Linguistica',
+        codice: 'L-12',
+        riasec: {R: 0, I: 4, A: 2, S: 5, E: 4, C: 3},
+        valori: ['universalismo', 'benevolenza', 'sicurezza'],
+        stile: ['teorico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'basso', lingue: 'alto', creativita: 'medio'},
+        carico: 'medio-alto'
+      },
+      'ssml-criminologia': {
+        nome: 'Criminologia, Sicurezza e Difesa Sociale',
+        facolta: 'SSML',
+        codice: 'L-12',
+        riasec: {R: 1, I: 5, A: 1, S: 4, E: 2, C: 3},
+        valori: ['sicurezza', 'conformita', 'potere'],
+        stile: ['teorico', 'pratico'],
+        prerequisiti: {matematica: 'basso', lingue: 'medio', creativita: 'basso'},
+        carico: 'medio'
+      },
+      'ssml-turismo': {
+        nome: 'Marketing per il turismo enogastronomico',
+        facolta: 'SSML',
+        codice: 'L-12',
+        riasec: {R: 1, I: 2, A: 4, S: 3, E: 5, C: 3},
+        valori: ['stimolazione', 'edonismo', 'successo'],
+        stile: ['pratico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'basso', lingue: 'alto', creativita: 'alto'},
+        carico: 'medio'
+      },
+      'lettere-lingue': {
+        nome: 'Lingue e culture europee e del resto del mondo',
+        facolta: 'Facoltà di Lettere',
+        codice: 'L-11',
+        riasec: {R: 0, I: 4, A: 3, S: 4, E: 2, C: 2},
+        valori: ['universalismo', 'autodirezione', 'benevolenza'],
+        stile: ['teorico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'basso', lingue: 'alto', creativita: 'medio'},
+        carico: 'medio-alto'
+      },
+      'lettere-arte': {
+        nome: 'Letteratura, arte, musica e spettacolo',
+        facolta: 'Facoltà di Lettere',
+        codice: 'L-10',
+        riasec: {R: 0, I: 3, A: 5, S: 3, E: 2, C: 1},
+        valori: ['autodirezione', 'stimolazione', 'universalismo'],
+        stile: ['teorico', 'laboratoriale'],
+        prerequisiti: {matematica: 'basso', lingue: 'medio', creativita: 'alto'},
+        carico: 'medio'
+      },
+      'lettere-moda': {
+        nome: 'Design e discipline della moda',
+        facolta: 'Facoltà di Lettere',
+        codice: 'L-3',
+        riasec: {R: 2, I: 2, A: 5, S: 2, E: 4, C: 2},
+        valori: ['autodirezione', 'successo', 'stimolazione'],
+        stile: ['laboratoriale', 'pratico'],
+        prerequisiti: {matematica: 'basso', lingue: 'basso', creativita: 'alto'},
+        carico: 'medio-alto'
+      },
+      'economia-sanita': {
+        nome: 'Aziende sanitarie ed economia della salute',
+        facolta: 'Facoltà di Economia',
+        codice: 'L-33',
+        riasec: {R: 0, I: 3, A: 0, S: 4, E: 3, C: 5},
+        valori: ['benevolenza', 'sicurezza', 'conformita'],
+        stile: ['teorico', 'pratico'],
+        prerequisiti: {matematica: 'medio', lingue: 'basso', creativita: 'basso'},
+        carico: 'medio-alto'
+      },
+      'economia-startup': {
+        nome: 'Start-up d\'impresa e modelli di business',
+        facolta: 'Facoltà di Economia',
+        codice: 'L-33',
+        riasec: {R: 1, I: 3, A: 2, S: 1, E: 5, C: 3},
+        valori: ['autodirezione', 'successo', 'potere'],
+        stile: ['pratico', 'laboratoriale'],
+        prerequisiti: {matematica: 'medio', lingue: 'medio', creativita: 'alto'},
+        carico: 'alto'
+      },
+      'economia-banche': {
+        nome: 'Scienze bancarie e consulenti finanziari',
+        facolta: 'Facoltà di Economia',
+        codice: 'L-33',
+        riasec: {R: 0, I: 4, A: 0, S: 2, E: 3, C: 5},
+        valori: ['sicurezza', 'successo', 'conformita'],
+        stile: ['teorico', 'pratico'],
+        prerequisiti: {matematica: 'alto', lingue: 'basso', creativita: 'basso'},
+        carico: 'alto'
+      },
+      'economia-psico': {
+        nome: 'Psicoeconomia',
+        facolta: 'Facoltà di Economia',
+        codice: 'L-33',
+        riasec: {R: 0, I: 5, A: 1, S: 3, E: 2, C: 3},
+        valori: ['autodirezione', 'universalismo', 'stimolazione'],
+        stile: ['teorico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'medio', lingue: 'basso', creativita: 'medio'},
+        carico: 'medio-alto'
+      },
+      'economia-turismo': {
+        nome: 'Scienze del turismo per il management e i beni culturali',
+        facolta: 'Facoltà di Economia',
+        codice: 'L-15',
+        riasec: {R: 0, I: 2, A: 3, S: 3, E: 5, C: 3},
+        valori: ['stimolazione', 'universalismo', 'successo'],
+        stile: ['pratico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'basso', lingue: 'alto', creativita: 'medio'},
+        carico: 'medio'
+      },
+      'ingegneria-civile': {
+        nome: 'Ingegneria civile e ambientale',
+        facolta: 'Facoltà di Ingegneria',
+        codice: 'L-7',
+        riasec: {R: 5, I: 4, A: 1, S: 2, E: 2, C: 3},
+        valori: ['sicurezza', 'conformita', 'universalismo'],
+        stile: ['teorico', 'laboratoriale'],
+        prerequisiti: {matematica: 'alto', lingue: 'basso', creativita: 'medio'},
+        carico: 'alto'
+      },
+      'ingegneria-industriale': {
+        nome: 'Ingegneria industriale',
+        facolta: 'Facoltà di Ingegneria',
+        codice: 'L-9',
+        riasec: {R: 5, I: 4, A: 0, S: 1, E: 3, C: 3},
+        valori: ['successo', 'sicurezza', 'conformita'],
+        stile: ['teorico', 'laboratoriale'],
+        prerequisiti: {matematica: 'alto', lingue: 'basso', creativita: 'basso'},
+        carico: 'alto'
+      },
+      'ingegneria-informatica': {
+        nome: 'Ingegneria informatica e dell\'automazione',
+        facolta: 'Facoltà di Ingegneria',
+        codice: 'L-8',
+        riasec: {R: 4, I: 5, A: 1, S: 0, E: 2, C: 3},
+        valori: ['autodirezione', 'stimolazione', 'successo'],
+        stile: ['pratico', 'laboratoriale'],
+        prerequisiti: {matematica: 'alto', lingue: 'basso', creativita: 'medio'},
+        carico: 'alto'
+      },
+      'giurisprudenza-comunicazione': {
+        nome: 'Scienze della comunicazione',
+        facolta: 'Facoltà di Giurisprudenza',
+        codice: 'L-20',
+        riasec: {R: 0, I: 3, A: 4, S: 3, E: 4, C: 2},
+        valori: ['autodirezione', 'stimolazione', 'universalismo'],
+        stile: ['pratico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'basso', lingue: 'medio', creativita: 'alto'},
+        carico: 'medio'
+      },
+      'giurisprudenza-servizi': {
+        nome: 'Servizi giuridici',
+        facolta: 'Facoltà di Giurisprudenza',
+        codice: 'L-14',
+        riasec: {R: 0, I: 4, A: 0, S: 3, E: 3, C: 5},
+        valori: ['sicurezza', 'conformita', 'benevolenza'],
+        stile: ['teorico', 'pratico'],
+        prerequisiti: {matematica: 'basso', lingue: 'basso', creativita: 'basso'},
+        carico: 'medio-alto'
+      },
+      'giurisprudenza-politica': {
+        nome: 'Scienze politiche e sociali',
+        facolta: 'Facoltà di Giurisprudenza',
+        codice: 'L-36',
+        riasec: {R: 0, I: 4, A: 1, S: 4, E: 3, C: 3},
+        valori: ['universalismo', 'benevolenza', 'potere'],
+        stile: ['teorico', 'interdisciplinare'],
+        prerequisiti: {matematica: 'basso', lingue: 'medio', creativita: 'medio'},
+        carico: 'medio'
+      },
+      'giurisprudenza-magistrale': {
+        nome: 'Giurisprudenza (Ciclo Unico)',
+        facolta: 'Facoltà di Giurisprudenza',
+        codice: 'LMG-01',
+        riasec: {R: 0, I: 5, A: 0, S: 2, E: 3, C: 4},
+        valori: ['conformita', 'sicurezza', 'potere'],
+        stile: ['teorico'],
+        prerequisiti: {matematica: 'basso', lingue: 'medio', creativita: 'basso'},
+        carico: 'alto',
+        durata: '5 anni'
+      },
+      'psicologia-biologia': {
+        nome: 'Scienze biologiche',
+        facolta: 'Facoltà di Psicologia',
+        codice: 'L-13',
+        riasec: {R: 3, I: 5, A: 0, S: 2, E: 1, C: 3},
+        valori: ['universalismo', 'autodirezione', 'stimolazione'],
+        stile: ['teorico', 'laboratoriale'],
+        prerequisiti: {matematica: 'medio', lingue: 'basso', creativita: 'medio'},
+        carico: 'alto'
+      },
+      'psicologia-educazione': {
+        nome: 'Scienze dell\'educazione e della formazione',
+        facolta: 'Facoltà di Psicologia',
+        codice: 'L-19',
+        riasec: {R: 0, I: 3, A: 2, S: 5, E: 2, C: 2},
+        valori: ['benevolenza', 'universalismo', 'sicurezza'],
+        stile: ['teorico', 'pratico'],
+        prerequisiti: {matematica: 'basso', lingue: 'basso', creativita: 'medio'},
+        carico: 'medio'
+      },
+      'psicologia-sport': {
+        nome: 'Scienze delle attività motorie e sportive',
+        facolta: 'Facoltà di Psicologia',
+        codice: 'L-22',
+        riasec: {R: 4, I: 2, A: 1, S: 4, E: 3, C: 1},
+        valori: ['stimolazione', 'successo', 'benevolenza'],
+        stile: ['pratico', 'laboratoriale'],
+        prerequisiti: {matematica: 'basso', lingue: 'basso', creativita: 'medio', fisica: 'alto'},
+        carico: 'medio'
+      },
+      'psicologia-psico': {
+        nome: 'Scienze e tecniche psicologiche',
+        facolta: 'Facoltà di Psicologia',
+        codice: 'L-24',
+        riasec: {R: 0, I: 5, A: 1, S: 5, E: 2, C: 2},
+        valori: ['benevolenza', 'universalismo', 'autodirezione'],
+        stile: ['teorico', 'pratico'],
+        prerequisiti: {matematica: 'medio', lingue: 'basso', creativita: 'medio'},
+        carico: 'medio-alto'
+      }
+    };
+
+    // Quiz questions structure
+    const quizQuestions = {
+      bloccoA: [ // RIASEC - 18 domande
+        {
+          id: 'A01',
+          text: 'Quale giornata ti entusiasma di più?',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Assemblare un prototipo meccanico'},
+            {value: 'I', label: 'B', text: 'Fare ricerche in biblioteca o online'},
+            {value: 'A', label: 'C', text: 'Scrivere e illustrare un racconto'}
+          ]
+        },
+        {
+          id: 'A02',
+          text: 'Sei in un gruppo di amici, si propone un\'attività:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Organizzare un evento sportivo'},
+            {value: 'E', label: 'B', text: 'Creare una strategia per vendere un prodotto'},
+            {value: 'C', label: 'C', text: 'Sistemare documenti e dati per un progetto'}
+          ]
+        },
+        {
+          id: 'A03',
+          text: 'Ti propongono di partecipare a un progetto:',
+          type: 'choice',
+          options: [
+            {value: 'I', label: 'A', text: 'Analizzare un problema di sicurezza informatica'},
+            {value: 'A', label: 'B', text: 'Dipingere un murales per un evento'},
+            {value: 'C', label: 'C', text: 'Pianificare il budget e gestire spese'}
+          ]
+        },
+        {
+          id: 'A04',
+          text: 'Nel tempo libero preferisci:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Costruire o riparare qualcosa'},
+            {value: 'I', label: 'B', text: 'Analizzare dati di un sondaggio'},
+            {value: 'E', label: 'C', text: 'Coordinare un team verso un obiettivo'}
+          ]
+        },
+        {
+          id: 'A05',
+          text: 'Ti regalano un corso a scelta:',
+          type: 'choice',
+          options: [
+            {value: 'A', label: 'A', text: 'Fotografia creativa'},
+            {value: 'S', label: 'B', text: 'Educazione alla salute'},
+            {value: 'C', label: 'C', text: 'Tecniche di archiviazione e catalogazione'}
+          ]
+        },
+        {
+          id: 'A06',
+          text: 'Ti affascina di più:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Lavorare su un impianto elettrico'},
+            {value: 'I', label: 'B', text: 'Fare esperimenti in laboratorio'},
+            {value: 'E', label: 'C', text: 'Organizzare la promozione di un evento'}
+          ]
+        },
+        {
+          id: 'A07',
+          text: 'Quando impari una cosa nuova:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Vuoi subito provarla sul campo'},
+            {value: 'I', label: 'B', text: 'Ti piace capire le teorie dietro'},
+            {value: 'A', label: 'C', text: 'Vuoi creare qualcosa di originale'}
+          ]
+        },
+        {
+          id: 'A08',
+          text: 'Un professore ti propone:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Fare volontariato in un\'associazione'},
+            {value: 'E', label: 'B', text: 'Progettare una campagna pubblicitaria'},
+            {value: 'C', label: 'C', text: 'Gestire la contabilità di un progetto'}
+          ]
+        },
+        {
+          id: 'A09',
+          text: 'Se vinci un concorso:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Investi in un laboratorio personale'},
+            {value: 'I', label: 'B', text: 'Finanzi una ricerca scientifica'},
+            {value: 'A', label: 'C', text: 'Produci un cortometraggio'}
+          ]
+        },
+        {
+          id: 'A10',
+          text: 'Ti trovi meglio quando:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Aiuti qualcuno a imparare'},
+            {value: 'E', label: 'B', text: 'Dirigi un gruppo di lavoro'},
+            {value: 'C', label: 'C', text: 'Ordini documenti e procedure'}
+          ]
+        },
+        {
+          id: 'A11',
+          text: 'Ti attrae di più:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Riparare un motore'},
+            {value: 'I', label: 'B', text: 'Studiare un fenomeno naturale'},
+            {value: 'A', label: 'C', text: 'Allestire una mostra'}
+          ]
+        },
+        {
+          id: 'A12',
+          text: 'Ti entusiasma:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Fare da tutor a un compagno'},
+            {value: 'E', label: 'B', text: 'Presentare un\'idea a potenziali investitori'},
+            {value: 'C', label: 'C', text: 'Redigere un manuale di procedure'}
+          ]
+        },
+        {
+          id: 'A13',
+          text: 'Sei curioso di:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Usare strumenti e macchinari nuovi'},
+            {value: 'I', label: 'B', text: 'Comprendere il funzionamento del cervello'},
+            {value: 'A', label: 'C', text: 'Comporre un brano musicale'}
+          ]
+        },
+        {
+          id: 'A14',
+          text: 'Ti rende orgoglioso:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Far crescere le competenze di un gruppo'},
+            {value: 'E', label: 'B', text: 'Chiudere un contratto importante'},
+            {value: 'C', label: 'C', text: 'Strutturare un archivio digitale'}
+          ]
+        },
+        {
+          id: 'A15',
+          text: 'Preferisci:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Fare manutenzione a un sistema'},
+            {value: 'I', label: 'B', text: 'Fare indagini su un caso complesso'},
+            {value: 'A', label: 'C', text: 'Creare un\'opera grafica'}
+          ]
+        },
+        {
+          id: 'A16',
+          text: 'Trovi stimolante:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Gestire attività di volontariato'},
+            {value: 'E', label: 'B', text: 'Pianificare campagne di marketing'},
+            {value: 'C', label: 'C', text: 'Compilare e ordinare schede tecniche'}
+          ]
+        },
+        {
+          id: 'A17',
+          text: 'Se avessi una giornata libera:',
+          type: 'choice',
+          options: [
+            {value: 'R', label: 'A', text: 'Andare in un laboratorio tecnico'},
+            {value: 'I', label: 'B', text: 'Leggere un saggio scientifico'},
+            {value: 'A', label: 'C', text: 'Dipingere un quadro'}
+          ]
+        },
+        {
+          id: 'A18',
+          text: 'Ti piace:',
+          type: 'choice',
+          options: [
+            {value: 'S', label: 'A', text: 'Formare nuovi volontari'},
+            {value: 'E', label: 'B', text: 'Fare networking in un evento professionale'},
+            {value: 'C', label: 'C', text: 'Organizzare documenti e scadenze'}
+          ]
+        }
+      ],
+      bloccoB: [ // Valori - 8 domande slider
+        {
+          id: 'B01',
+          text: 'Quanto conta per te nella scelta universitaria?',
+          type: 'slider',
+          left: 'Stabilità e sicurezza',
+          right: 'Libertà e indipendenza',
+          leftValue: 'sicurezza',
+          rightValue: 'autodirezione'
+        },
+        {
+          id: 'B02',
+          text: 'Nel tuo futuro lavoro preferiresti:',
+          type: 'slider',
+          left: 'Seguire procedure consolidate',
+          right: 'Esplorare nuove possibilità',
+          leftValue: 'conformita',
+          rightValue: 'stimolazione'
+        },
+        {
+          id: 'B03',
+          text: 'Cosa ti motiva di più?',
+          type: 'slider',
+          left: 'Aiutare gli altri',
+          right: 'Raggiungere il successo personale',
+          leftValue: 'benevolenza',
+          rightValue: 'successo'
+        },
+        {
+          id: 'B04',
+          text: 'Nel tuo futuro ti vedi più orientato verso:',
+          type: 'slider',
+          left: 'Il bene comune e l\'ambiente',
+          right: 'Leadership e influenza',
+          leftValue: 'universalismo',
+          rightValue: 'potere'
+        },
+        {
+          id: 'B05',
+          text: 'Come preferisci lavorare?',
+          type: 'slider',
+          left: 'In autonomia completa',
+          right: 'Seguendo linee guida chiare',
+          leftValue: 'autodirezione',
+          rightValue: 'conformita'
+        },
+        {
+          id: 'B06',
+          text: 'Il tuo ambiente ideale è:',
+          type: 'slider',
+          left: 'Dinamico e imprevedibile',
+          right: 'Stabile e prevedibile',
+          leftValue: 'stimolazione',
+          rightValue: 'sicurezza'
+        },
+        {
+          id: 'B07',
+          text: 'Nella vita dai priorità a:',
+          type: 'slider',
+          left: 'Goderti il momento',
+          right: 'Supportare chi ti circonda',
+          leftValue: 'edonismo',
+          rightValue: 'benevolenza'
+        },
+        {
+          id: 'B08',
+          text: 'Ti attrae di più:',
+          type: 'slider',
+          left: 'Avere responsabilità e controllo',
+          right: 'Contribuire all\'equità sociale',
+          leftValue: 'potere',
+          rightValue: 'universalismo'
+        }
+      ],
+      bloccoC: [ // Stile apprendimento - 6 SJT
+        {
+          id: 'C01',
+          text: 'Il docente spiega un argomento complesso senza esempi. Cosa fai?',
+          type: 'choice',
+          subtitle: 'Scegli l\'approccio che ti viene più naturale',
+          options: [
+            {value: 'teorico', label: 'A', text: 'Studio la teoria finché la padroneggio completamente'},
+            {value: 'pratico', label: 'B', text: 'Lo applico subito in un esercizio per capirlo meglio'},
+            {value: 'interdisciplinare', label: 'C', text: 'Chiedo esempi e casi concreti per contestualizzare'}
+          ]
+        },
+        {
+          id: 'C02',
+          text: 'Hai un progetto in scadenza breve. Come procedi?',
+          type: 'choice',
+          options: [
+            {value: 'laboratoriale', label: 'A', text: 'Faccio un prototipo rapido e poi perfeziono'},
+            {value: 'teorico', label: 'B', text: 'Mi documento approfonditamente prima di iniziare'},
+            {value: 'interdisciplinare', label: 'C', text: 'Divido i compiti con il gruppo per essere efficienti'}
+          ]
+        },
+        {
+          id: 'C03',
+          text: 'Ricevi un compito creativo. Il tuo approccio:',
+          type: 'choice',
+          options: [
+            {value: 'teorico', label: 'A', text: 'Seguo linee guida e best practice consolidate'},
+            {value: 'laboratoriale', label: 'B', text: 'Sperimentazione libera e vedo cosa emerge'},
+            {value: 'interdisciplinare', label: 'C', text: 'Confronto idee con altri per arricchire la visione'}
+          ]
+        },
+        {
+          id: 'C04',
+          text: 'Per imparare un software nuovo:',
+          type: 'choice',
+          options: [
+            {value: 'teorico', label: 'A', text: 'Leggo il manuale e la documentazione'},
+            {value: 'pratico', label: 'B', text: 'Provo direttamente e imparo facendo'},
+            {value: 'interdisciplinare', label: 'C', text: 'Chiedo a chi già lo usa e guardo tutorial'}
+          ]
+        },
+        {
+          id: 'C05',
+          text: 'Ti danno un problema tecnico da risolvere:',
+          type: 'choice',
+          options: [
+            {value: 'teorico', label: 'A', text: 'Analizzo sistematicamente tutte le cause possibili'},
+            {value: 'laboratoriale', label: 'B', text: 'Testo diverse soluzioni pratiche rapidamente'},
+            {value: 'interdisciplinare', label: 'C', text: 'Lo discuto in team per avere prospettive diverse'}
+          ]
+        },
+        {
+          id: 'C06',
+          text: 'Nuovo corso con esercitazioni. Preferisci:',
+          type: 'choice',
+          options: [
+            {value: 'teorico', label: 'A', text: 'Approfondire prima tutti i concetti teorici'},
+            {value: 'pratico', label: 'B', text: 'Fare subito esercizi per capire la teoria'},
+            {value: 'interdisciplinare', label: 'C', text: 'Lavorare in gruppo per confrontarsi'}
+          ]
+        }
+      ],
+      bloccoD: [ // Prerequisiti - 5 domande
+        {
+          id: 'D01',
+          text: 'Come ti senti con la matematica?',
+          type: 'choice',
+          options: [
+            {value: 'alto', label: 'A', text: 'La adoro, risolvo problemi per divertimento'},
+            {value: 'medio', label: 'B', text: 'Me la cavo, con impegno capisco tutto'},
+            {value: 'basso', label: 'C', text: 'Preferisco evitarla quando possibile'}
+          ]
+        },
+        {
+          id: 'D02',
+          text: 'Le lingue straniere per te sono:',
+          type: 'choice',
+          options: [
+            {value: 'alto', label: 'A', text: 'Una passione, ne parlo già 2-3 fluentemente'},
+            {value: 'medio', label: 'B', text: 'Interessanti, me la cavo con l\'inglese'},
+            {value: 'basso', label: 'C', text: 'Un ostacolo, faccio fatica ad apprenderle'}
+          ]
+        },
+        {
+          id: 'D03',
+          text: 'La tua creatività visiva/artistica:',
+          type: 'choice',
+          options: [
+            {value: 'alto', label: 'A', text: 'È il mio forte, creo costantemente'},
+            {value: 'medio', label: 'B', text: 'Mi piace esprimermi quando capita'},
+            {value: 'basso', label: 'C', text: 'Non è il mio campo, preferisco altro'}
+          ]
+        },
+        {
+          id: 'D04',
+          text: 'Resistenza fisica e sport:',
+          type: 'choice',
+          options: [
+            {value: 'alto', label: 'A', text: 'Atleta o molto sportivo, alleno regolarmente'},
+            {value: 'medio', label: 'B', text: 'Attivo, faccio sport per benessere'},
+            {value: 'basso', label: 'C', text: 'Sedentario, preferisco attività mentali'}
+          ]
+        },
+        {
+          id: 'D05',
+          text: 'Manualità tecnica e pratica:',
+          type: 'choice',
+          options: [
+            {value: 'alto', label: 'A', text: 'Ottima, costruisco e riparo con facilità'},
+            {value: 'medio', label: 'B', text: 'Discreta, me la cavo con le istruzioni'},
+            {value: 'basso', label: 'C', text: 'Limitata, preferisco il lavoro intellettuale'}
+          ]
+        }
+      ],
+      bloccoE: [ // Reality check - 2 scenari
+        {
+          id: 'E01',
+          text: 'Immagina: 30 ore settimanali tra lezioni e laboratori, più studio a casa. Come ti senti?',
+          type: 'choice',
+          subtitle: 'Valuta onestamente la tua resistenza al carico di studio',
+          options: [
+            {value: 'alto', label: 'A', text: 'Perfetto, mi piace essere sempre impegnato'},
+            {value: 'medio', label: 'B', text: 'Gestibile con buona organizzazione'},
+            {value: 'basso', label: 'C', text: 'Preferisco un carico più leggero'}
+          ]
+        },
+        {
+          id: 'E02',
+          text: 'Lavori di gruppo frequenti e presentazioni. La tua reazione:',
+          type: 'choice',
+          subtitle: 'Pensa a come preferisci studiare e lavorare',
+          options: [
+            {value: 'alto', label: 'A', text: 'Ottimo, amo il confronto e la collaborazione'},
+            {value: 'medio', label: 'B', text: 'Va bene, mi adatto quando serve'},
+            {value: 'basso', label: 'C', text: 'Preferisco decisamente lavorare da solo'}
+          ]
+        }
+      ]
+    };
+
+    // Quiz state
+    let quizState = {
+      currentBlock: 0,
+      currentQuestion: 0,
+      answers: {
+        riasec: {R: 0, I: 0, A: 0, S: 0, E: 0, C: 0},
+        valori: {},
+        stile: {},
+        prerequisiti: {},
+        realityCheck: {}
+      },
+      startTime: null,
+      blockTimes: [],
+      timerInterval: null
+    };
+
+    // Initialize quiz
+    function initQuiz() {
+      showStartScreen();
+    }
+
+    // Show start screen
+    function showStartScreen() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = `
+        <div class="start-screen">
+          <h1>🎓 Scopri il tuo percorso universitario ideale</h1>
+          <p>Un viaggio personalizzato attraverso i tuoi interessi, valori e aspirazioni per trovare il corso di laurea perfetto per te.</p>
+          
+          <div class="features">
+            <div class="feature">
+              <div class="feature-icon">🎯</div>
+              <h3>Scientifico</h3>
+              <p>Basato su modelli psicologici validati (RIASEC, Schwartz)</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">⚡</div>
+              <h3>Veloce</h3>
+              <p>Solo 10-12 minuti per risultati accurati</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">🎮</div>
+              <h3>Interattivo</h3>
+              <p>Esperienza gamificata con badge e progressi</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">📊</div>
+              <h3>Personalizzato</h3>
+              <p>Analisi su misura dei tuoi punti di forza</p>
+            </div>
+          </div>
+
+          <p style="margin-top: 2rem; font-style: italic; color: #666;">
+            💡 Suggerimento: rispondi d'istinto, la prima risposta è spesso la più autentica!
+          </p>
+
+          <div class="button-group">
+            <button class="btn btn-primary" onclick="startQuiz()">
+              Inizia il Quiz
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Start quiz
+    function startQuiz() {
+      quizState.startTime = Date.now();
+      document.getElementById('progressContainer').style.display = 'block';
+      showQuestion();
+    }
+
+    // Get all questions for current block
+    function getCurrentBlockQuestions() {
+      const blocks = [
+        quizQuestions.bloccoA,
+        quizQuestions.bloccoB,
+        quizQuestions.bloccoC,
+        quizQuestions.bloccoD,
+        quizQuestions.bloccoE
+      ];
+      return blocks[quizState.currentBlock] || [];
+    }
+
+    // Show current question
+    function showQuestion() {
+      const questions = getCurrentBlockQuestions();
+      const question = questions[quizState.currentQuestion];
+      
+      if (!question) {
+        nextBlock();
+        return;
+      }
+
+      updateProgress();
+      
+      const container = document.getElementById('quizContainer');
+      
+      if (question.type === 'choice') {
+        showChoiceQuestion(container, question);
+      } else if (question.type === 'slider') {
+        showSliderQuestion(container, question);
+      }
+    }
+
+    // Show choice question
+    function showChoiceQuestion(container, question) {
+      const isSpeedRound = quizState.currentBlock === 4; // Reality check veloce
+      
+      container.innerHTML = `
+        <div class="question-screen">
+          ${isSpeedRound ? '<div class="timer-container"><div class="timer" id="timer">10</div></div>' : ''}
+          <div class="question-header">
+            <span class="question-number">Domanda ${getTotalQuestionNumber()} di ${getTotalQuestions()}</span>
+            <h2 class="question-text">${question.text}</h2>
+            ${question.subtitle ? `<p class="question-subtitle">${question.subtitle}</p>` : ''}
+          </div>
+          
+          <div class="options-container">
+            ${question.options.map((opt, idx) => `
+              <div class="option" onclick="selectOption('${question.id}', '${opt.value}', ${idx})">
+                <div class="option-label">${opt.label}</div>
+                <div class="option-text">${opt.text}</div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="button-group">
+            ${quizState.currentQuestion > 0 || quizState.currentBlock > 0 ? 
+              '<button class="btn btn-secondary" onclick="previousQuestion()">← Indietro</button>' : ''}
+            <button class="btn btn-primary" id="nextBtn" disabled onclick="nextQuestion()">
+              Avanti →
+            </button>
+          </div>
+        </div>
+      `;
+      
+      if (isSpeedRound) {
+        startTimer();
+      }
+    }
+
+    // Show slider question
+    function showSliderQuestion(container, question) {
+      container.innerHTML = `
+        <div class="question-screen">
+          <div class="question-header">
+            <span class="question-number">Domanda ${getTotalQuestionNumber()} di ${getTotalQuestions()}</span>
+            <h2 class="question-text">${question.text}</h2>
+          </div>
+          
+          <div class="slider-container">
+            <div class="slider-labels">
+              <div class="slider-label left">${question.left}</div>
+              <div class="slider-label right">${question.right}</div>
+            </div>
+            <input type="range" class="slider" id="slider-${question.id}" 
+              min="1" max="7" value="4" 
+              oninput="updateSliderValue('${question.id}', '${question.leftValue}', '${question.rightValue}')">
+            <div class="slider-value" id="slider-value-${question.id}">Neutro</div>
+          </div>
+          
+          <div class="button-group">
+            ${quizState.currentQuestion > 0 || quizState.currentBlock > 0 ? 
+              '<button class="btn btn-secondary" onclick="previousQuestion()">← Indietro</button>' : ''}
+            <button class="btn btn-primary" onclick="nextQuestion()">
+              Avanti →
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Timer functions
+    function startTimer() {
+      let seconds = 10;
+      const timerEl = document.getElementById('timer');
+      
+      quizState.timerInterval = setInterval(() => {
+        seconds--;
+        timerEl.textContent = seconds;
+        
+        if (seconds <= 3) {
+          timerEl.classList.add('warning');
+        }
+        
+        if (seconds <= 0) {
+          clearInterval(quizState.timerInterval);
+          autoSelectRandom();
+        }
+      }, 1000);
+    }
+
+    function autoSelectRandom() {
+      const options = document.querySelectorAll('.option');
+      if (options.length > 0) {
+        const randomIdx = Math.floor(Math.random() * options.length);
+        options[randomIdx].click();
+        setTimeout(() => nextQuestion(), 500);
+      }
+    }
+
+    // Selection handlers
+    function selectOption(questionId, value, index) {
+      if (quizState.timerInterval) {
+        clearInterval(quizState.timerInterval);
+      }
+      
+      // Remove previous selections
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      
+      // Add selection
+      document.querySelectorAll('.option')[index].classList.add('selected');
+      
+      // Store answer
+      storeAnswer(questionId, value);
+      
+      // Enable next button
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    function updateSliderValue(questionId, leftValue, rightValue) {
+      const slider = document.getElementById(`slider-${questionId}`);
+      const valueDisplay = document.getElementById(`slider-value-${questionId}`);
+      const value = parseInt(slider.value);
+      
+      const labels = [
+        `Molto ${leftValue}`,
+        `${leftValue}`,
+        `Leggermente ${leftValue}`,
+        'Neutro',
+        `Leggermente ${rightValue}`,
+        `${rightValue}`,
+        `Molto ${rightValue}`
+      ];
+      
+      valueDisplay.textContent = labels[value - 1];
+      
+      // Store answer
+      const finalValue = value <= 3 ? leftValue : rightValue;
+      const strength = Math.abs(4 - value);
+      storeAnswer(questionId, {value: finalValue, strength: strength});
+    }
+
+    // Store answer based on block
+    function storeAnswer(questionId, value) {
+      if (quizState.currentBlock === 0) { // RIASEC
+        if (typeof value === 'string' && quizState.answers.riasec[value] !== undefined) {
+          quizState.answers.riasec[value]++;
+        }
+      } else if (quizState.currentBlock === 1) { // Valori
+        if (value.value && value.strength) {
+          if (!quizState.answers.valori[value.value]) {
+            quizState.answers.valori[value.value] = 0;
+          }
+          quizState.answers.valori[value.value] += value.strength;
+        }
+      } else if (quizState.currentBlock === 2) { // Stile apprendimento
+        if (!quizState.answers.stile[value]) {
+          quizState.answers.stile[value] = 0;
+        }
+        quizState.answers.stile[value]++;
+      } else if (quizState.currentBlock === 3) { // Prerequisiti
+        quizState.answers.prerequisiti[questionId] = value;
+      } else if (quizState.currentBlock === 4) { // Reality check
+        quizState.answers.realityCheck[questionId] = value;
+      }
+    }
+
+    // Navigation
+    function nextQuestion() {
+      const questions = getCurrentBlockQuestions();
+      
+      if (quizState.currentQuestion < questions.length - 1) {
+        quizState.currentQuestion++;
+        showQuestion();
+      } else {
+        nextBlock();
+      }
+    }
+
+    function previousQuestion() {
+      if (quizState.currentQuestion > 0) {
+        quizState.currentQuestion--;
+      } else if (quizState.currentBlock > 0) {
+        quizState.currentBlock--;
+        const questions = getCurrentBlockQuestions();
+        quizState.currentQuestion = questions.length - 1;
+      }
+      showQuestion();
+    }
+
+    function nextBlock() {
+      // Award badge for completed block
+      awardBadge(quizState.currentBlock);
+      
+      if (quizState.currentBlock < 4) {
+        quizState.currentBlock++;
+        quizState.currentQuestion = 0;
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    // Award badge
+    function awardBadge(blockIndex) {
+      const badges = ['badgeInterests', 'badgeValues', 'badgeLearning', 'badgeReality'];
+      if (blockIndex < badges.length) {
+        const badge = document.getElementById(badges[blockIndex]);
+        if (badge) {
+          badge.classList.add('earned');
+        }
+      }
+    }
+
+    // Progress updates
+    function updateProgress() {
+      const totalQuestions = getTotalQuestions();
+      const currentQuestion = getTotalQuestionNumber();
+      const percentage = Math.round((currentQuestion / totalQuestions) * 100);
+      
+      document.getElementById('progressFill').style.width = percentage + '%';
+      document.getElementById('overallProgress').textContent = percentage + '%';
+      
+      // Update section name
+      const sectionNames = ['Interessi', 'Valori', 'Stile di Apprendimento', 'Prerequisiti', 'Reality Check'];
+      document.getElementById('sectionName').textContent = sectionNames[quizState.currentBlock];
+    }
+
+    function getTotalQuestions() {
+      return 31; // Total questions across all blocks
+    }
+
+    function getTotalQuestionNumber() {
+      let total = 0;
+      for (let i = 0; i < quizState.currentBlock; i++) {
+        total += [18, 8, 6, 5, 2][i];
+      }
+      return total + quizState.currentQuestion + 1;
+    }
+
+    // Calculate results
+    function calculateResults() {
+      const scores = {};
+      
+      // Calculate match score for each course
+      Object.keys(corsiData).forEach(courseId => {
+        const course = corsiData[courseId];
+        let score = 0;
+        let factors = {
+          riasec: 0,
+          valori: 0,
+          stile: 0,
+          prerequisiti: 0,
+          carico: 0
+        };
+        
+        // RIASEC match (40% weight)
+        let riasecMatch = 0;
+        Object.keys(quizState.answers.riasec).forEach(key => {
+          if (course.riasec[key]) {
+            riasecMatch += quizState.answers.riasec[key] * course.riasec[key];
+          }
+        });
+        factors.riasec = (riasecMatch / 30) * 40; // Normalize and weight
+        
+        // Values match (25% weight)
+        let valoriMatch = 0;
+        let valoriCount = 0;
+        Object.keys(quizState.answers.valori).forEach(value => {
+          if (course.valori.includes(value)) {
+            valoriMatch += quizState.answers.valori[value];
+            valoriCount++;
+          }
+        });
+        if (valoriCount > 0) {
+          factors.valori = (valoriMatch / (valoriCount * 3)) * 25;
+        }
+        
+        // Learning style match (20% weight)
+        let stileMatch = 0;
+        Object.keys(quizState.answers.stile).forEach(style => {
+          if (course.stile.includes(style)) {
+            stileMatch += quizState.answers.stile[style];
+          }
+        });
+        factors.stile = (stileMatch / 6) * 20;
+        
+        // Prerequisites match (10% weight)
+        let prereqMatch = 0;
+        let prereqCount = 0;
+        Object.keys(quizState.answers.prerequisiti).forEach(prereq => {
+          const userLevel = quizState.answers.prerequisiti[prereq];
+          const courseReq = course.prerequisiti[prereq.toLowerCase().replace('D0', '').replace('1', 'matematica').replace('2', 'lingue').replace('3', 'creativita').replace('4', 'fisica').replace('5', 'manualita')];
+          
+          if (courseReq) {
+            prereqCount++;
+            if (userLevel === courseReq) {
+              prereqMatch += 1;
+            } else if ((userLevel === 'alto' && courseReq === 'medio') || 
+                      (userLevel === 'medio' && courseReq === 'basso')) {
+              prereqMatch += 0.7;
+            } else if (userLevel === 'alto' && courseReq === 'basso') {
+              prereqMatch += 0.5;
+            }
+          }
+        });
+        if (prereqCount > 0) {
+          factors.prerequisiti = (prereqMatch / prereqCount) * 10;
+        }
+        
+        // Workload match (5% weight)
+        const userLoad = quizState.answers.realityCheck['E01'];
+        if (userLoad === 'alto' && course.carico === 'alto') {
+          factors.carico = 5;
+        } else if (userLoad === 'medio' && course.carico === 'medio') {
+          factors.carico = 5;
+        } else if (userLoad === 'basso' && course.carico === 'medio') {
+          factors.carico = 3;
+        }
+        
+        score = factors.riasec + factors.valori + factors.stile + factors.prerequisiti + factors.carico;
+        
+        scores[courseId] = {
+          score: Math.round(score),
+          factors: factors,
+          course: course
+        };
+      });
+      
+      // Sort by score and return top 5
+      return Object.entries(scores)
+        .sort((a, b) => b[1].score - a[1].score)
+        .slice(0, 5)
+        .map(([id, data]) => ({id, ...data}));
+    }
+
+    // Show results
+    function showResults() {
+      const results = calculateResults();
+      const topResult = results[0];
+      
+      // Celebration animation
+      showCelebration();
+      
+      // Build profile summary
+      const dominantRiasec = Object.entries(quizState.answers.riasec)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 2)
+        .map(([key]) => {
+          const labels = {
+            R: 'Pratico',
+            I: 'Investigativo',
+            A: 'Artistico',
+            S: 'Sociale',
+            E: 'Intraprendente',
+            C: 'Convenzionale'
+          };
+          return labels[key];
+        });
+      
+      const dominantValues = Object.entries(quizState.answers.valori)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 2)
+        .map(([key]) => key.charAt(0).toUpperCase() + key.slice(1));
+      
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = `
+        <div class="results-screen">
+          <div class="results-header">
+            <h2>🎉 Il tuo profilo universitario</h2>
+            <p>Basato sulle tue risposte, ecco i corsi più adatti a te</p>
+          </div>
+          
+          <div class="profile-summary">
+            <h3>I tuoi punti di forza:</h3>
+            <div class="profile-traits">
+              ${dominantRiasec.map(trait => `<span class="trait">${trait}</span>`).join('')}
+              ${dominantValues.map(value => `<span class="trait">${value}</span>`).join('')}
+            </div>
+          </div>
+          
+          <div class="course-recommendations">
+            <h3>Corsi consigliati per te:</h3>
+            ${results.map((result, idx) => `
+              <div class="course-card">
+                <div class="course-header">
+                  <div>
+                    <div class="course-title">${idx + 1}. ${result.course.nome}</div>
+                    <div class="course-faculty">${result.course.facolta} (${result.course.codice})</div>
+                  </div>
+                  <div class="match-percentage">${result.score}% match</div>
+                </div>
+                
+                <div class="course-details">
+                  <div class="pros-cons">
+                    <div class="pros">
+                      <h4>Perché fa per te</h4>
+                      <ul>
+                        ${getCoursePros(result).map(pro => `<li>${pro}</li>`).join('')}
+                      </ul>
+                    </div>
+                    <div class="cons">
+                      <h4>Da considerare</h4>
+                      <ul>
+                        ${getCourseCons(result).map(con => `<li>${con}</li>`).join('')}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div class="detail-section">
+                    <div class="detail-title">Primo passo consigliato:</div>
+                    <div class="detail-content">${getFirstStep(result.course)}</div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="email-form">
+            <h3>Ricevi il report completo via email</h3>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+              Ti invieremo l'analisi dettagliata con tutti i corsi analizzati e suggerimenti personalizzati
+            </p>
+            <input type="email" class="email-input" id="emailInput" placeholder="tua@email.it">
+            <button class="btn btn-primary" onclick="sendResults()">
+              Invia Report
+            </button>
+            <p style="font-size: 0.8rem; color: #999; margin-top: 0.5rem;">
+              Copia automatica a: info@tesintesta.it
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Get course pros based on match
+    function getCoursePros(result) {
+      const pros = [];
+      
+      if (result.factors.riasec > 15) {
+        pros.push('Allineato con i tuoi interessi principali');
+      }
+      if (result.factors.valori > 15) {
+        pros.push('Rispecchia i tuoi valori personali');
+      }
+      if (result.factors.stile > 10) {
+        pros.push('Metodi di studio adatti al tuo stile');
+      }
+      
+      // Add specific pros based on course
+      if (result.course.nome.includes('Ingegneria')) {
+        pros.push('Ottime prospettive lavorative');
+      }
+      if (result.course.nome.includes('Lingue')) {
+        pros.push('Apertura internazionale');
+      }
+      
+      return pros.slice(0, 3);
+    }
+
+    // Get course cons based on match
+    function getCourseCons(result) {
+      const cons = [];
+      
+      if (result.course.carico === 'alto') {
+        cons.push('Richiede impegno costante');
+      }
+      if (result.course.prerequisiti.matematica === 'alto' && 
+          quizState.answers.prerequisiti['D01'] !== 'alto') {
+        cons.push('Matematica impegnativa');
+      }
+      if (result.course.prerequisiti.lingue === 'alto' && 
+          quizState.answers.prerequisiti['D02'] !== 'alto') {
+        cons.push('Richiede buone competenze linguistiche');
+      }
+      
+      return cons.slice(0, 2);
+    }
+
+    // Get first step suggestion
+    function getFirstStep(course) {
+      const steps = {
+        'ingegneria': 'Partecipa a un open day della facoltà o segui un MOOC introduttivo su Coursera',
+        'economia': 'Leggi il piano di studi e parla con studenti del corso su gruppi social',
+        'lettere': 'Assisti a una lezione aperta o sfoglia i programmi dei corsi online',
+        'psicologia': 'Consulta i laboratori disponibili e le opportunità di tirocinio',
+        'giurisprudenza': 'Informati sui percorsi post-laurea e parla con professionisti del settore',
+        'ssml': 'Verifica i requisiti linguistici e le certificazioni richieste'
+      };
+      
+      for (let key in steps) {
+        if (course.facolta.toLowerCase().includes(key)) {
+          return steps[key];
+        }
+      }
+      
+      return 'Consulta il sito della facoltà e partecipa agli open day';
+    }
+
+    // Send results via email
+    function sendResults() {
+      const email = document.getElementById('emailInput').value.trim();
+      
+      if (!email) {
+        alert('Inserisci un indirizzo email valido');
+        return;
+      }
+      
+      const results = calculateResults();
+      const resultText = results.map((r, idx) => 
+        `${idx + 1}. ${r.course.nome} (${r.score}% compatibilità)`
+      ).join('\n');
+      
+      const subject = encodeURIComponent('Il tuo report di orientamento universitario - TesinTesta');
+      const body = encodeURIComponent(
+        `Ciao!\n\n` +
+        `Ecco i risultati del tuo quiz di orientamento universitario:\n\n` +
+        `I TUOI CORSI CONSIGLIATI:\n${resultText}\n\n` +
+        `Per maggiori informazioni sui corsi e per ricevere supporto nell'iscrizione, ` +
+        `contatta TesinTesta:\n` +
+        `📧 info@tesintesta.it\n` +
+        `🌐 www.tesintesta.it\n\n` +
+        `Buona scelta universitaria!\n` +
+        `Il team di TesinTesta`
+      );
+      const cc = encodeURIComponent('info@tesintesta.it');
+      
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}&cc=${cc}`;
+      
+      // Show confirmation
+      alert('Email inviata! Controlla la tua casella di posta.');
+    }
+
+    // Celebration animation
+    function showCelebration() {
+      const celebration = document.createElement('div');
+      celebration.className = 'celebration';
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = ['#667eea', '#764ba2', '#4ECDC4', '#FFE66D', '#FF6B6B'][Math.floor(Math.random() * 5)];
+        confetti.style.animationDelay = Math.random() * 3 + 's';
+        celebration.appendChild(confetti);
+      }
+      
+      document.body.appendChild(celebration);
+      
+      setTimeout(() => {
+        celebration.remove();
+      }, 3000);
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', initQuiz);
+  </script>
+</body>
+</html>
