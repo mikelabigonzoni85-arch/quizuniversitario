@@ -32,57 +32,6 @@
       overflow-x: hidden;
     }
 
-<script>
-function generaPDF() {
-  const risultato = document.getElementById('quizContainer').innerHTML;
-  const nomeUtente = prompt("Inserisci il tuo nome per il PDF:", "Studente TesinTesta");
-
-  const data = new Date().toLocaleDateString('it-IT', {
-    day: '2-digit', month: 'long', year: 'numeric'
-  });
-
-  // Struttura del PDF in HTML
-  const contenutoPDF = `
-  <div style="font-family: 'Segoe UI', sans-serif; padding: 40px;">
-    <div style="text-align: center; margin-bottom: 50px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="180" height="70" viewBox="0 0 150 60">
-        <rect width="150" height="60" fill="#29A8E0" rx="10"/>
-        <g fill="#ffffff" font-family="Arial, sans-serif" font-weight="700" font-size="18">
-          <text x="15" y="28">TESIN-</text>
-          <text x="15" y="48">TESTA</text>
-        </g>
-      </svg>
-      <h1 style="margin-top: 30px; color: #333;">Risultato del Quiz di Orientamento Universitario</h1>
-      <p style="font-size: 1.1rem; color: #666;">${data}</p>
-    </div>
-
-    <div style="margin-bottom: 40px; font-size: 1.1rem; line-height: 1.6;">
-      <p><strong>Nome partecipante:</strong> ${nomeUtente}</p>
-      <p>Grazie per aver completato il quiz di orientamento universitario di <strong>TesinTesta</strong>! 
-      Il seguente documento riassume i tuoi risultati, le aree di interesse emerse e i corsi consigliati in base alle tue preferenze, valori e stile di apprendimento.</p>
-    </div>
-
-    <hr style="border: none; border-top: 2px solid #29A8E0; margin: 40px 0;">
-
-    <div>${risultato}</div>
-
-    <p style="margin-top: 40px; font-size: 0.9rem; color: #777; text-align: center;">
-      © ${new Date().getFullYear()} TesinTesta – Tutti i diritti riservati
-    </p>
-  </div>
-  `;
-
-  const opzioni = {
-    margin: 0.5,
-    filename: `Risultato_Quiz_${nomeUtente.replace(/\s+/g, '_')}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-  };
-
-  html2pdf().from(contenutoPDF).set(opzioni).save();
-}
-</script>
 
     /* Header */
     header {
@@ -93,9 +42,7 @@ function generaPDF() {
       position: sticky;
       top: 0;
       z-index: 100;
-    }
-
-    .header-content {
+    }    .header-content {
       max-width: 1200px;
       margin: 0 auto;
       display: flex;
@@ -819,6 +766,61 @@ function generaPDF() {
       }
     }
   </style>
+
+<script>
+function generaPDF() {
+  const risultato = document.getElementById('quizContainer').innerHTML;
+  const nomeUtente = prompt("Inserisci il tuo nome per il PDF:", "Studente TesinTesta");
+
+  const data = new Date().toLocaleDateString('it-IT', {
+    day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  // Struttura del PDF in HTML
+  const contenutoPDF = `
+  <div style="font-family: 'Segoe UI', sans-serif; padding: 40px;">
+    <div style="text-align: center; margin-bottom: 50px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="180" height="70" viewBox="0 0 150 60">
+        <rect width="150" height="60" fill="#29A8E0" rx="10"/>
+        <g fill="#ffffff" font-family="Arial, sans-serif" font-weight="700" font-size="18">
+          <text x="15" y="28">TESIN-</text>
+          <text x="15" y="48">TESTA</text>
+        </g>
+      </svg>
+      <h1 style="margin-top: 30px; color: #333;">Risultato del Quiz di Orientamento Universitario</h1>
+      <p style="font-size: 1.1rem; color: #666;">${data}</p>
+    </div>
+
+    <div style="margin-bottom: 40px; font-size: 1.1rem; line-height: 1.6;">
+      <p><strong>Nome partecipante:</strong> ${nomeUtente}</p>
+      <p>Grazie per aver completato il quiz di orientamento universitario di <strong>TesinTesta</strong>! 
+      Il seguente documento riassume i tuoi risultati, le aree di interesse emerse e i corsi consigliati in base alle tue preferenze, valori e stile di apprendimento.</p>
+    </div>
+
+    <hr style="border: none; border-top: 2px solid #29A8E0; margin: 40px 0;">
+
+    <div>${risultato}</div>
+
+    <p style="margin-top: 40px; font-size: 0.9rem; color: #777; text-align: center;">
+      © ${new Date().getFullYear()} TesinTesta – Tutti i diritti riservati
+    </p>
+  </div>
+  `;
+
+  const opzioni = {
+    margin: 0.5,
+    filename: `Risultato_Quiz_${nomeUtente.replace(/\s+/g, '_')}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().from(contenutoPDF).set(opzioni).save();
+}
+
+</script>
+
+
 </head>
 <body>
   <header>
